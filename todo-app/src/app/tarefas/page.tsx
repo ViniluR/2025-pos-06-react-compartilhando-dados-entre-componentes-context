@@ -1,11 +1,10 @@
 "use client";
 
-import type React from "react";
-import axios from 'axios';
-import { useEffect, useState } from "react";
-import { TarefaInterface } from "@/data";
+import React, { useState } from "react";
 import Cabecalho from "@/componentes/Navbar.tsx";
 import ModalTarefa from "@/app/tarefas/nova/page.tsx";
+import { useTarefas } from "@/data/ContextTarefa";
+
 
 interface TarefaProps {
 	titulo: string;
@@ -17,8 +16,8 @@ const Tarefa: React.FC<TarefaProps> = ({ titulo, concluido }) => {
 
 	const classeCard = `p-3 mb-1 rounded-lg shadow-md hover:cursor-pointer hover:border ${
 		estaConcluido
-			? "bg-green-700 hover:bg-green-800 hover:border-none"
-			: "bg-gray-400 hover:bg-gray-500 hover:border-none"
+			? "bg-indigo-700 hover:bg-indigo-800 hover:border-none"
+			: "bg-gray-600 hover:bg-gray-700 hover:border-none"
 	}`;
 
 	const classeCorDoTexto = estaConcluido ? "text-amber-50" : "";
@@ -44,7 +43,7 @@ interface TareafasProps {
 
 const Tarefas: React.FC<TareafasProps> = ({ dados }) => {
 	return (
-		<div className="grid reverse grid-cols-1 md:grid-cols-2 gap-8">
+		<div className="grid reverse grid-cols-1 md:grid-cols-2 gap-8 mx-auto">
 			{[...dados].reverse().map((tarefa) => (
 				<Tarefa
 					key={tarefa.id}
@@ -59,40 +58,15 @@ const Tarefas: React.FC<TareafasProps> = ({ dados }) => {
 
 
 const Home = () => {
-	const [tarefas, setTarefas] = useState<TarefaInterface[]>([]);
+	const { tarefas, adicionarTarefa } = useTarefas();
 	const [mostrarModal, setMostrarModal] = useState(false);
 
-	useEffect(() => {
-	axios.get("https://dummyjson.com/todos")
-		.then(res => {
-			const tarefasDaAPI = res.data.todos.map((tarefa: any) => ({
-				id: tarefa.id,
-				title: tarefa.todo,
-				completed: tarefa.completed,
-			}));
-			setTarefas(tarefasDaAPI);
-		})
-		.catch(err => {
-			console.error("Erro ao buscar tarefas:", err);
-		});
-}, []);
-
-	const adicionarTarefa = (titulo: string) => {
-		const novaTarefa: TarefaInterface = {
-			id: tarefas.length + 1,
-			title: titulo,
-			completed: false,
-		};
-		setTarefas((prev) => [...prev, novaTarefa]);
-	};
-
-
 	return (
-		<div className="container mx-auto p-4">
+		<div className="container mx-auto p-4 px-64 bg-gradient-to-br from-indigo-900 to-black">
 			<Cabecalho />
 
-			<div className="flex justify-end mb-4">
-        		<button onClick={() => setMostrarModal(true)} className="bg-pink-600 hover:cursor-pointer text-white px-10 py-2 rounded">
+			<div className="flex justify-end mb-8">
+        		<button onClick={() => setMostrarModal(true)} className="bg-purple-700 hover:cursor-pointer text-white px-10 py-2 rounded">
          				Nova Tarefa
        			</button>
         	</div>
